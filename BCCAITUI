@@ -1,29 +1,66 @@
-#include<bits/stdc++.h>
+---------------------------------------------------------- Phiên bản cơ bản --------------------------------------------------------------
+#include<bits/stdc++.h> // Khai báo thư viện chuẩn của C++
 using namespace std;
-int n,M;
-struct dat{
+int n,M; // Khai báo biến n, M
+struct dat{ // Khai báo cấu trúc dat để lưu trữ trọng lượng và giá trị của đồ vật
     int w=0, v=0;
 };
-dat a[105];
-int dp[110][110];
-int res=0;
+dat a[105]; // Khai báo mảng a để lưu trữ thông tin trọng lượng và giá trị của đồ vật
+int dp[110][110]; // Khai báo mảng dp để lưu trữ giá trị lớn nhất có thể đạt được với mỗi trọng lượng
+int res=0; // Khai biến res để lưu trữ giá trị tối đa có thể đạt được
 void Solve(){
-    for(int i=1; i<=n;i++){
-        for(int j=1;j<=M;j++){
-            if(j<a[i].w)
-                dp[i][j] = dp[i-1][j];
+    for(int i=1; i<=n;i++){ // i = đồ vật
+        for(int j=1;j<=M;j++){ // j = trọng lượng
+            if(j<a[i].w) // Kiểm tra trọng lượng (j) có bé hơn trọng lượng của đồ vật (i) không
+                dp[i][j] = dp[i-1][j]; // TH1 Bé hơn: Không lấy. Giá trị lớn nhất có thể đạt được với các đồ vật từ 1 - i-1 
             else
-                dp[i][j] = max(dp[i-1][j], dp[i-1][j-a[i].w] + a[i].v);
-            res = max(res,dp[i][j]);
+                dp[i][j] = max(dp[i-1][j], dp[i-1][j-a[i].w] + a[i].v); // TH2 Lớn hơn: Lấy hoặc không lấy. TH a Ko lấy:  giá trị lớn nhất có thể đạt được là dp[i-1][j]. TH b Lấy: giá trị lớn nhất có thể đạt được là dp[i-1][j-a[i].w]+a[i].v
+            res = max(res,dp[i][j]); // Cập nhật giá trị của biến res bằng giá trị lớn nhất có thể đạt được từ dp[i][j]
         }
     }
 }
 
 int main(){
-    cin>>n>>M;
-    for(int i=1;i<=n;i++)
-        cin >> a[i].w >> a[i].v;
-    Solve();
-    cout << res;
+    cin>>n>>M; // Nhập n, M
+    for(int i=1;i<=n;i++) // Chạy vòng lặp từ 1 đến n
+        cin >> a[i].w >> a[i].v; // Nhập trọng lượng và giá trị của đồ vật
+    Solve(); // Gọi hàm Solve
+    cout << res; // In ra thông báo giá trị lớn nhất
+    return 0; //Kết thúc chương trình thành công
+}
+---------------------------------------------------------- Phiên bản tối ưu --------------------------------------------------------------
+#include<bits/stdc++.h> // Khai báo thư viện chuẩn của C++
+using namespace std;
+const int MAX_N = 100; // Khai báo hằng gói hàng (N)
+const int MAX_W = 100; // Khai báo hằng trọng lượng (W)
+
+int n, W; // Khai báo biến n, W
+int dp[MAX_W + 1]; // Khai báo mảng dp
+
+struct Item { // Khai báo cấu trúc Item để lưu trữ trọng lượng và giá trị của đồ vật
+    int w, v;
+};
+
+Item a[MAX_N + 1]; 
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr); // 3 dòng này làm tăng tốc độ chạy của chương trình nhờ vào việc giải phóng liên kết giữa input (cin) và output (cout)
+    cin >> n >> W; // Nhập n và W
+    for (int i = 1; i <= n; i++) {  // Chạy vòng lặp từ 1 đến n
+        cin >> a[i].w >> a[i].v; // Nhập trọng lượng và giá trị của đồ vật
+    }
+    memset(dp, 0, sizeof(dp)); // Thiết lập giá trị ban đầu là 0. dp: chọn vùng để thiết lập giá trị, 0: giá trị cần thiết lập và sizeof: kích thước vùng cần thiết lập
+    clock_t start = clock();
+    for (int i = 1; i <= n; i++) { // i = đồ vật
+        for (int j = W; j >= a[i].w; j--) { // Nếu trọng lượng của j >= trọng lượng của món đồ i thì ta lấy món hàng i 
+            dp[j] = max(dp[j], dp[j - a[i].w] + a[i].v); //So sánh giá trị j hiện tại với giá trị j trừ đi trọng lượng của món hàng i + giá trị của món hàng i
+        }
+    }
+    clock_t end = clock(); // Kết thúc đo thời gian
+    double elapsed_time = double(end - start) / CLOCKS_PER_SEC; // Tính thời gian chạy
+    cout << dp[W] << endl;
+    cout << "Thoi gian chay: " << elapsed_time << " giay" << endl; // In ra thời gian chạy
     return 0;
 }
