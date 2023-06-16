@@ -54,7 +54,7 @@ int main() {
     memset(dp, 0, sizeof(dp)); // Thiết lập giá trị ban đầu là 0. dp: chọn vùng để thiết lập giá trị, 0: giá trị cần thiết lập và sizeof: kích thước vùng cần thiết lập
     clock_t start = clock();
     for (int i = 1; i <= n; i++) { // i = đồ vật
-        for (int j = W; j >= a[i].w; j--) { // Nếu trọng lượng của j >= trọng lượng của món đồ i thì ta lấy món hàng i 
+        for (int j = W; j >= a[i].w; j--) { // Nếu trọng lượng của j >= trọng lượng của món đồ i thì ta lấy món hàng i. Chạy vòng lặp từ trọng lượng W và giảm dần xuống tới trọng lượng có món hàng i
             dp[j] = max(dp[j], dp[j - a[i].w] + a[i].v); //So sánh giá trị j hiện tại với giá trị j trừ đi trọng lượng của món hàng i + giá trị của món hàng i
         }
     }
